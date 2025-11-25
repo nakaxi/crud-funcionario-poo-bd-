@@ -120,6 +120,25 @@ public class comandacontrol {
                 ps2.setInt(4, quantidade);
                 ps2.executeUpdate();
             }
+            String sqlAtualizaStatus = "UPDATE Comanda SET statusComanda = 1 WHERE idComanda = ?";
+            String sqlAtualizaValor = "UPDATE Comanda SET valorComanda = "
+            + "(SELECT SUM(subTotal) FROM ItemPedido WHERE idComandaFK = ?) "
+            + "WHERE idComanda = ?";
+
+            PreparedStatement ps3 = con.prepareStatement(sqlAtualizaStatus);
+            ps3.setInt(1, idComanda);
+            ps3.executeUpdate();
+
+            PreparedStatement ps4 = con.prepareStatement(sqlAtualizaValor);
+            ps4.setInt(1, idComanda);
+            ps4.setInt(2, idComanda);
+            ps4.executeUpdate();
+
+            String sqlValor = "UPDATE Comanda SET valorComanda = (SELECT SUM(subTotal) FROM ItemPedido WHERE idComandaFK = ?) WHERE idComanda = ?";
+            PreparedStatement psV = con.prepareStatement(sqlValor);
+            psV.setInt(1, idComanda);
+            psV.setInt(2, idComanda);
+            psV.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -159,27 +178,43 @@ public class comandacontrol {
                 ps2.executeUpdate();
             }
 
+            String sqlValor = "UPDATE Comanda SET valorComanda = (SELECT SUM(subTotal) FROM ItemPedido WHERE idComandaFK = ?) WHERE idComanda = ?";
+            PreparedStatement psV = con.prepareStatement(sqlValor);
+            psV.setInt(1, idComanda);
+            psV.setInt(2, idComanda);
+            psV.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public void zerarComanda(int idComanda) {
-       String sqlDeleteItens = "DELETE FROM ItemPedido WHERE idComandaFK = ?";
-    String sqlZeraValor = "UPDATE Comanda SET valorComanda = 0 WHERE idComanda = ?";
+        String sql = "UPDATE Comanda SET statusComanda = 2 WHERE idComanda = ?";
+        String sqlDeleteItens = "DELETE FROM ItemPedido WHERE idComandaFK = ?";
+        String sqlZeraValor = "UPDATE Comanda SET valorComanda = 0 WHERE idComanda = ?";
 
-    try (Connection con = conexao.get()) {
+        try (Connection con = conexao.get()) {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idComanda);
+            ps.executeUpdate();
 
-        PreparedStatement ps1 = con.prepareStatement(sqlDeleteItens);
-        ps1.setInt(1, idComanda);
-        ps1.executeUpdate();
+            PreparedStatement ps1 = con.prepareStatement(sqlDeleteItens);
+            ps1.setInt(1, idComanda);
+            ps1.executeUpdate();
 
-        PreparedStatement ps2 = con.prepareStatement(sqlZeraValor);
-        ps2.setInt(1, idComanda);
-        ps2.executeUpdate();
+            PreparedStatement ps2 = con.prepareStatement(sqlZeraValor);
+            ps2.setInt(1, idComanda);
+            ps2.executeUpdate();
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+            String sqlValor = "UPDATE Comanda SET valorComanda = (SELECT SUM(subTotal) FROM ItemPedido WHERE idComandaFK = ?) WHERE idComanda = ?";
+            PreparedStatement psV = con.prepareStatement(sqlValor);
+            psV.setInt(1, idComanda);
+            psV.setInt(2, idComanda);
+            psV.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-}
 }

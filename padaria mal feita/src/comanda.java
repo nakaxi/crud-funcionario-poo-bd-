@@ -6,7 +6,7 @@ public class comanda{
     private int idComanda;
     private int num;
     private double valortotal;
-    private int status; // 0 = aberta, 1 = paga, 2 = cancelada
+    private int status;
     private List<itencomanda> itens = new ArrayList<>();
 
     public comanda(int idComanda, int num, int status, double valorInicial) {
@@ -18,7 +18,7 @@ public class comanda{
 }
     public comanda(int num) {
     this.num = num;
-    this.status = 0;
+    this.status = 1;
     }
 
     public int getIdComanda() {
